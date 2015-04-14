@@ -1,9 +1,10 @@
 module.exports = function (game, opts) {
 	var THREE = game.THREE;
-	var renderer = game.renderer;
+
+	var renderer = game.view.renderer;
 
 	this.separation = 10;
-	this.distortion = 0.1;
+	this.distortion = 1;
 	this.aspectFactor = 1;
 
 	if (opts) {
@@ -81,40 +82,37 @@ module.exports = function (game, opts) {
 
 	this.render = function ( scene, camera ) {
 		renderer.clear();
-    	_material.uniforms['c'].value = this.distortion;
+    _material.uniforms['c'].value = this.distortion;
 
 		// camera parameters
-		if (camera.matrixAutoUpdate) camera.updateMatrix();
+		//if (camera.matrixAutoUpdate) camera.updateMatrix();
+		camera.updateMatrixWorld();
+
 		_pCamera.fov = camera.fov;
 		_pCamera.aspect = camera.aspect / (2*this.aspectFactor);
 		_pCamera.near = camera.near;
-		_pCamera.far = camera.far;		
+		_pCamera.far = camera.far;
 		_pCamera.updateProjectionMatrix();
 
-
 		// Render left
-
-		var offset = new THREE.Vector3(-this.separation,0,0);
 		_pCamera.matrix.copy(camera.matrixWorld);
- 		_pCamera.matrix.translate(offset);
- 		_pCamera.matrixWorldNeedsUpdate = true;
+ 		_pCamera.applyMatrix(new THREE.Matrix4().makeTranslation(-this.separation, 0, 0));
+		_pCamera.matrixWorldNeedsUpdate = true;
 
 		renderer.setViewport( 0, 0, _width, _height );
 		renderer.render( scene, _pCamera, _renderTarget, true );
 		renderer.render( _scene, _oCamera );
 
 		// Render right
-
-		offset.set(this.separation,0,0);
 		_pCamera.matrix.copy(camera.matrixWorld);
-		_pCamera.matrix.translate(offset);
- 		_pCamera.matrixWorldNeedsUpdate = true;
+		_pCamera.applyMatrix(new THREE.Matrix4().makeTranslation(this.separation, 0, 0));
+		_pCamera.matrixWorldNeedsUpdate = true;
 
 		renderer.setViewport( _width, 0, _width, _height );
-    	renderer.render( scene, _pCamera, _renderTarget, true );
+    renderer.render( scene, _pCamera, _renderTarget, true );
 
 		renderer.render( _scene, _oCamera );
 	};
 
-	game.renderer = this;
+	game.view.renderer = this;
 };
