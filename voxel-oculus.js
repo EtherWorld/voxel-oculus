@@ -7,6 +7,8 @@ module.exports = function (game, opts) {
 	this.distortion = 1;
 	this.aspectFactor = 1;
 
+	this.enabled = false;
+
 	if (opts) {
 		if (opts.separation !== undefined) this.separation = opts.separation;
 		if (opts.distortion !== undefined) this.distortion = opts.distortion;
@@ -114,5 +116,24 @@ module.exports = function (game, opts) {
 		renderer.render( _scene, _oCamera );
 	};
 
-	game.view.renderer = this;
+	this.enable = function() {
+		this.originalRenderer = game.view.renderer;
+		this.setSize(game.width, game.height);
+		game.view.renderer = this;
+		this.enabled = true;
+	};
+
+	this.disable = function() {
+		game.view.renderer = this.originalRenderer;
+		this.setSize(game.width, game.height);
+		this.enabled = false;
+	};
+
+	this.toggle = function() {
+		if (!this.enabled) {
+			this.enable();
+		} else {
+			this.disable();
+		}
+	}
 };
