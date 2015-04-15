@@ -28,7 +28,7 @@ module.exports = function (game, opts) {
 	_scene.add( _oCamera );
 
 	// initialization
-	renderer.autoClear = false;
+	renderer.autoClear = true;
 
 	var _params = { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat };
 	var _renderTarget = new THREE.WebGLRenderTarget( 800, 600, _params );
@@ -120,11 +120,13 @@ module.exports = function (game, opts) {
 		this.originalRenderer = game.view.renderer;
 		this.setSize(game.width, game.height);
 		game.view.renderer = this;
+		renderer.autoClear = false;
 		this.enabled = true;
 	};
 
 	this.disable = function() {
 		game.view.renderer = this.originalRenderer;
+		renderer.autoClear = true;
 		this.setSize(game.width, game.height);
 		this.enabled = false;
 	};
