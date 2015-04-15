@@ -125,7 +125,10 @@ module.exports = function (game, opts) {
 	};
 
 	this.disable = function() {
-		game.view.renderer = this.originalRenderer;
+		if (!this.originalRenderer) {
+			return false;
+		}
+		game.view.renderer = this.originalRenderer;	
 		renderer.autoClear = true;
 		this.setSize(game.width, game.height);
 		this.enabled = false;
